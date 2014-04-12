@@ -132,6 +132,7 @@ public class ChatViewer extends ManagedActivity implements
 	private static final int CONTEXT_MENU_REPEAT_ID = 0x101;
 	private static final int CONTEXT_MENU_COPY_ID = 0x102;
 	private static final int CONTEXT_MENU_REMOVE_ID = 0x103;
+	private static final int CONTEXT_MENU_ANSWER_ID = 0x104;
 
 	private static final int DIALOG_EXPORT_CHAT_ID = 0x200;
 
@@ -424,8 +425,8 @@ public class ChatViewer extends ManagedActivity implements
 					actionWithUser));
 			return true;
 		case OPTION_MENU_OCCUPANT_LIST_ID:
-			startActivity(OccupantList.createIntent(this, actionWithAccount,
-					actionWithUser));
+			startActivityForResult(OccupantList.createIntent(this, actionWithAccount,
+				actionWithUser), OPTION_MENU_OCCUPANT_LIST_ID);
 			return true;
 		case OPTION_MENU_START_OTR_ID:
 			try {
@@ -492,6 +493,13 @@ public class ChatViewer extends ManagedActivity implements
 				getResources().getText(R.string.message_copy));
 		menu.add(0, CONTEXT_MENU_REMOVE_ID, 0,
 				getResources().getText(R.string.message_remove));
+
+		AbstractChat abstractChat = MessageManager.getInstance().getChat(
+				actionWithAccount, actionWithUser);
+		if (abstractChat != null && abstractChat instanceof RoomChat
+				&& ((RoomChat) abstractChat).getState() == RoomState.available)
+			menu.add(0, CONTEXT_MENU_ANSWER_ID, 0,
+					getResources().getText(R.string.message_answer));
 	}
 
 	/**
@@ -535,6 +543,9 @@ public class ChatViewer extends ManagedActivity implements
 		case CONTEXT_MENU_REMOVE_ID:
 			MessageManager.getInstance().removeMessage(actionWithMessage);
 			chatViewerAdapter.onChatChange(actionWithView, false);
+			return true;
+		case CONTEXT_MENU_ANSWER_ID:
+			insertText(actionWithMessage.getResource() + ": ");
 			return true;
 		}
 		return false;
@@ -878,4 +889,10 @@ public class ChatViewer extends ManagedActivity implements
 		return ACTION_ATTENTION.equals(intent.getAction());
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == OPTION_MENU_OCCUPANT_LIST_ID && resultCode == RESULT_OK) {
+			insertText(data.getStringExtra("occupant") + ": ");
+		}
+	}
 }

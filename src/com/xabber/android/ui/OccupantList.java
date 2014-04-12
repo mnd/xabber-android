@@ -19,11 +19,14 @@ import java.util.Collection;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ListView;
 
 import com.xabber.android.data.Application;
 import com.xabber.android.data.account.OnAccountChangedListener;
 import com.xabber.android.data.entity.BaseEntity;
 import com.xabber.android.data.extension.muc.MUCManager;
+import com.xabber.android.data.extension.muc.Occupant;
 import com.xabber.android.data.intent.AccountIntentBuilder;
 import com.xabber.android.data.intent.EntityIntentBuilder;
 import com.xabber.android.data.roster.OnContactChangedListener;
@@ -93,6 +96,16 @@ public class OccupantList extends ManagedListActivity implements
 	public void onAccountsChanged(Collection<String> accounts) {
 		if (accounts.contains(account))
 			listAdapter.onChange();
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Occupant occupant = (Occupant) listAdapter.getItem(position);
+		String occupantName = occupant.getNickname();
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra("occupant", occupantName);
+        setResult(RESULT_OK, returnIntent);
+        finish();
 	}
 
 	public static Intent createIntent(Context context, String account,

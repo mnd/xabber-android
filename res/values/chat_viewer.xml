@@ -32,6 +32,7 @@
     <string name="message_copy">Copy</string>
     <!-- http://dl.dropbox.com/u/1029995/com.xabber.android/chat_viewer_context_menu.png -->
     <string name="message_quote">Quote</string>
+    <string name="message_answer">Answer</string>
     <!-- http://dl.dropbox.com/u/1029995/com.xabber.android/chat_viewer_context_menu.png -->
     <string name="message_remove">Remove from history</string>
     <!-- http://dl.dropbox.com/u/1029995/com.xabber.android/chat_viewer_context_menu.png -->
